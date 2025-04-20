@@ -4,7 +4,7 @@ from time import sleep
 from enum import Enum
 from datetime import datetime
 from pydantic import BaseModel
-from random import randint
+from random import uniform
 import toml
 
 
@@ -17,8 +17,8 @@ class RoutineItem(BaseModel):
     time_start: datetime
     time_end: datetime
     stage_type: StageType
-    range_start: int
-    range_end: int
+    range_start: float
+    range_end: float
 
 
 def load_routine_from_config(config_path: str) -> list[RoutineItem]:
@@ -47,9 +47,9 @@ ROUTINE = load_routine_from_config("routine_config.toml")
 
 
 class Border(BaseModel):
-    x: int
-    y: int
-    r: int
+    x: float
+    y: float
+    r: float
 
     def __init__(self, x, y, r):
         super().__init__(x=x, y=y, r=r)
@@ -68,7 +68,7 @@ def move_border(border: Border):
 
 
 def calculate_border(
-    border_start: Border, border_end: Border, total_diff: int, now_diff: int
+    border_start: Border, border_end: Border, total_diff: float, now_diff: float
 ) -> Border:
     x = int(border_start.x + (border_end.x - border_start.x) * (now_diff / total_diff))
     y = int(border_start.y + (border_end.y - border_start.y) * (now_diff / total_diff))
@@ -100,8 +100,8 @@ class Stage:
 
     def shrink(self):
         logger.info("Executing SHRINK stage...")
-        total_diff = int((self.time_end - self.time_start).total_seconds())
-        now_diff = int((datetime.now() - self.time_start).total_seconds())
+        total_diff = (self.time_end - self.time_start).total_seconds()
+        now_diff = (datetime.now() - self.time_start).total_seconds()
         new_border = calculate_border(
             self.border_start, self.border_end, total_diff, now_diff
         )
@@ -129,11 +129,11 @@ def main():
         if item.stage_type == StageType.SHRINK:
             border_start.r = item.range_start
             border_end = Border(
-                x=randint(
+                x=uniform(
                     border_start.x - item.range_start + item.range_end,
                     border_start.x + item.range_start - item.range_end,
                 ),
-                y=randint(
+                y=uniform(
                     border_start.y - item.range_start + item.range_end,
                     border_start.y + item.range_start - item.range_end,
                 ),
