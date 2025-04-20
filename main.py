@@ -51,6 +51,9 @@ class Border(BaseModel):
     y: int
     r: int
 
+    def __init__(self, x, y, r):
+        super().__init__(x=x, y=y, r=r)
+
 
 def move_border(border: Border):
     logger.info(
@@ -124,6 +127,7 @@ def main():
         # adjusting new border infomation
         border_start = border_end
         if item.stage_type == StageType.SHRINK:
+            border_start.r = item.range_start
             border_end = Border(
                 x=randint(
                     border_start.x - item.range_start + item.range_end,
