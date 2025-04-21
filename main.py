@@ -67,6 +67,15 @@ def move_border(border: Border):
         logger.error(f"Failed to move border: {e}")
 
 
+def say_message(message: str):
+    logger.info(f"Sending message to players: {message}")
+    try:
+        with MCRcon("localhost") as mcr:
+            mcr.command(f"say {message}")
+    except Exception as e:
+        logger.error(f"Failed to send message: {e}")
+
+
 def calculate_border(
     border_start: Border, border_end: Border, total_diff: float, now_diff: float
 ) -> Border:
@@ -90,6 +99,15 @@ class Stage:
         self.stage_type = stage_type
         self.border_start = border_start
         self.border_end = border_end
+
+    def start(self):
+        if self.stage_type == StageType.SHRINK:
+            say_message("新一轮缩圈开始！")
+            say_message(f"新边界中心：{self.border_end.x}, {self.border_end.y}")
+            say_message(f"新边界半径：{self.border_end.r}")
+            say_message(f"结束时间：{self.time_end}")
+        elif self.stage_type == StageType.PEACE:
+            say_message("进入和平阶段")
 
     def work(self):
         match self.stage_type:
@@ -153,6 +171,7 @@ def main():
             border_end=border_end,
         )
 
+        stage.start()
         # loop and work
         while datetime.now() < item.time_end:
             stage.work()
