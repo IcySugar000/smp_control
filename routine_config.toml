@@ -92,7 +92,7 @@ range_end = 400
 
 [[routine.items]]
 time_start = "2025-05-03T20:30:00"
-time_end = "2025-05-03T21:30:00"
+time_end = "2025-05-03T21:00:00"
 stage_type = "SHRINK"
 range_start = 400
-range_end = 0
+range_end = 10
